@@ -1,0 +1,12 @@
+{
+  "Jwt": {
+    "Key": ""
+  },
+  "Integration": {
+    "ApiKey": ""
+  },
+  "Bootstrap": {
+    "AdminEmail": "",
+    "AdminPassword": ""
+  }
+}

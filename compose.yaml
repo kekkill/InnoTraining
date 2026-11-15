@@ -1,0 +1,80 @@
+name: innoshop
+services:
+  users-db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: users
+      POSTGRES_USER: users
+      POSTGRES_PASSWORD: ${users_db_password:?Run scripts/init-dev first}
+    ports: ["127.0.0.1:5433:5432"]
+    volumes: ["users-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U users -d users"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  products-db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: products
+      POSTGRES_USER: products
+      POSTGRES_PASSWORD: ${products_db_password:?Run scripts/init-dev first}
+    ports: ["127.0.0.1:5434:5432"]
+    volumes: ["products-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U products -d products"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  users:
+    build:
+      context: .
+      args: { service: Users }
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__PostgreSql: Host=users-db;Database=users;Username=users;Password=${users_db_password}
+      Jwt__Key: ${jwt_key:?Run scripts/init-dev first}
+      Integration__ApiKey: ${service_key:?Run scripts/init-dev first}
+      Bootstrap__AdminEmail: ${admin_email}
+      Bootstrap__AdminPassword: ${admin_password}
+      Frontend__ProductsApiUrl: ${products_public_api_url:-http://localhost:5082/api/v1}
+      Mail__PublicApiUrl: ${users_public_url:-http://localhost:5081}
+      Mail__From: ${mail_from:-}
+      Mail__SmtpHost: ${smtp_host:-}
+      Mail__SmtpPort: ${smtp_port:-587}
+      Mail__SmtpSecurity: ${smtp_security:-StartTls}
+      Mail__SmtpUser: ${smtp_user:-}
+      Mail__SmtpPassword: ${smtp_password:-}
+    ports: ["127.0.0.1:5081:8080"]
+    depends_on:
+      users-db: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/health/ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 15s
+  products:
+    build:
+      context: .
+      args: { service: Products }
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__PostgreSql: Host=products-db;Database=products;Username=products;Password=${products_db_password}
+      Jwt__Key: ${jwt_key}
+      Integration__ApiKey: ${service_key}
+      Integration__UsersBaseUrl: http://users:8080/
+      Frontend__Origin: ${users_public_url:-http://localhost:5081}
+    ports: ["127.0.0.1:5082:8080"]
+    depends_on:
+      products-db: { condition: service_healthy }
+      users: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/health/ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 15s
+volumes:
+  users-data:
+  products-data:

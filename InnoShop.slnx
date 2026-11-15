@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/InnoShop.Users.Api/InnoShop.Users.Api.csproj" />
+    <Project Path="src/InnoShop.Products.Api/InnoShop.Products.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/InnoShop.Tests/InnoShop.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,72 @@
+@users = http://localhost:5081
+@products = http://localhost:5082
+@token = 
+@userId = 
+@productId = 
+@emailToken = 
+@resetToken = 
+
+### Users health
+GET {{users}}/health/ready
+
+### Register. Configure SMTP first (docs/EMAIL.md), then read the link in your real inbox
+POST {{users}}/api/v1/auth/register
+Content-Type: application/json
+
+{"name":"","email":"","password":""}
+
+### Confirm email; token is the token query parameter from the email link
+GET {{users}}/api/v1/auth/confirm-email?token={{emailToken}}
+
+### Login. Copy accessToken into @token
+POST {{users}}/api/v1/auth/login
+Content-Type: application/json
+
+{"email":"","password":""}
+
+### Me
+GET {{users}}/api/v1/users/me
+Authorization: Bearer {{token}}
+
+### Create product. Copy id into @productId
+POST {{products}}/api/v1/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"name":"Keyboard","description":"Mechanical","price":120.50,"isAvailable":true}
+
+### Public search
+GET {{products}}/api/v1/products?search=keyboard&minPrice=10&maxPrice=200&page=1&pageSize=20&sort=priceAsc
+
+### Own products
+GET {{products}}/api/v1/products/mine
+Authorization: Bearer {{token}}
+
+### Update own product
+PUT {{products}}/api/v1/products/{{productId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"name":"Keyboard v2","description":"Mechanical","price":119.99,"isAvailable":false}
+
+### Delete own product (soft delete)
+DELETE {{products}}/api/v1/products/{{productId}}
+Authorization: Bearer {{token}}
+
+### Forgot password
+POST {{users}}/api/v1/auth/forgot-password
+Content-Type: application/json
+
+{"email":""}
+
+### Reset password with the token from the recovery email, then sign in again
+POST {{users}}/api/v1/auth/reset-password
+Content-Type: application/json
+
+{"token":"{{resetToken}}","newPassword":""}
+
+### Resend confirmation if registration was saved but email delivery failed
+POST {{users}}/api/v1/auth/resend-confirmation
+Content-Type: application/json
+
+{"email":""}

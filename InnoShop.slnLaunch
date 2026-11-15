@@ -1,0 +1,19 @@
+[
+  {
+    "Name": "InnoShop - Users and Products",
+    "Projects": [
+      {
+        "Path": "src\\InnoShop.Users.Api\\InnoShop.Users.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\InnoShop.Products.Api\\InnoShop.Products.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "tests\\InnoShop.Tests\\InnoShop.Tests.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

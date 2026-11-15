@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>InnoShop</title>
+    <link rel="icon" href="data:,">
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <h1>InnoShop</h1>
+    <p id="current-user">Вход не выполнен</p>
+    <nav aria-label="Разделы">
+        <button type="button" data-page="catalog">Каталог</button>
+        <button type="button" data-page="account" id="account-button">Вход и регистрация</button>
+        <button type="button" data-page="mine" id="mine-button" hidden>Мои товары</button>
+        <button type="button" data-page="profile" id="profile-button" hidden>Профиль</button>
+        <button type="button" data-page="admin" id="admin-button" hidden>Пользователи</button>
+        <button type="button" id="logout-button" hidden>Выйти</button>
+    </nav>
+    <p id="message" role="status" aria-live="polite"></p>
+    <hr>
+    <main>
+        <section id="catalog">
+            <h2>Каталог</h2>
+            <form id="search-form">
+                <p><label>Поиск <input name="search" type="search"></label></p>
+                <p>
+                    <label>Цена от <input name="minPrice" type="number" min="0" step="0.01"></label>
+                    <label>до <input name="maxPrice" type="number" min="0" step="0.01"></label>
+                </p>
+                <p>
+                    <label>Наличие
+                        <select name="available">
+                            <option value="">Любое</option>
+                            <option value="true">Есть в наличии</option>
+                            <option value="false">Нет в наличии</option>
+                        </select>
+                    </label>
+                    <label>Сортировка
+                        <select name="sort">
+                            <option value="newest">Сначала новые</option>
+                            <option value="priceAsc">Сначала дешёвые</option>
+                            <option value="priceDesc">Сначала дорогие</option>
+                        </select>
+                    </label>
+                </p>
+                <button>Найти</button>
+            </form>
+            <p id="catalog-total"></p>
+            <ul id="catalog-list"></ul>
+            <button type="button" id="previous-page" disabled>Назад</button>
+            <span id="page-number"></span>
+            <button type="button" id="next-page" disabled>Далее</button>
+        </section>
+
+        <section id="account" hidden>
+            <h2>Вход</h2>
+            <form id="login-form">
+                <p><label>Email <input name="email" type="email" autocomplete="username" required></label></p>
+                <p><label>Пароль <input name="password" type="password" autocomplete="current-password" required></label></p>
+                <button>Войти</button>
+            </form>
+            <h2>Регистрация</h2>
+            <form id="register-form">
+                <p><label>Имя <input name="name" maxlength="100" required></label></p>
+                <p><label>Email <input name="email" type="email" autocomplete="email" maxlength="256" required></label></p>
+                <p><label>Пароль <input name="password" type="password" autocomplete="new-password" minlength="12" maxlength="128" required></label></p>
+                <p>Пароль: от 12 символов, заглавная и строчная буквы, цифра.</p>
+                <button>Зарегистрироваться</button>
+            </form>
+            <h2>Повторное подтверждение почты</h2>
+            <form id="confirmation-form">
+                <p><label>Email <input name="email" type="email" required></label></p>
+                <button>Отправить подтверждение</button>
+            </form>
+            <h2>Забыли пароль?</h2>
+            <form id="forgot-form">
+                <p><label>Email <input name="email" type="email" required></label></p>
+                <button>Отправить ссылку восстановления</button>
+            </form>
+        </section>
+
+        <section id="reset" hidden>
+            <h2>Новый пароль</h2>
+            <form id="reset-form">
+                <input name="token" type="hidden">
+                <p><label>Новый пароль <input name="newPassword" type="password" autocomplete="new-password" minlength="12" maxlength="128" required></label></p>
+                <p>От 12 символов, заглавная и строчная буквы, цифра.</p>
+                <button>Сохранить пароль</button>
+            </form>
+        </section>
+
+        <section id="mine" hidden>
+            <h2>Мои товары</h2>
+            <form id="product-form">
+                <input name="id" type="hidden">
+                <p><label>Название <input name="name" maxlength="150" required></label></p>
+                <p><label>Описание <textarea name="description" maxlength="3000"></textarea></label></p>
+                <p><label>Цена <input name="price" type="number" min="0" max="9999999999.99" step="0.01" required></label></p>
+                <p><label><input name="isAvailable" type="checkbox" checked> Есть в наличии</label></p>
+                <button>Сохранить товар</button>
+                <button type="button" id="cancel-edit">Очистить форму</button>
+            </form>
+            <p id="mine-total"></p>
+            <ul id="mine-list"></ul>
+        </section>
+
+        <section id="profile" hidden>
+            <h2>Профиль</h2>
+            <p id="profile-info"></p>
+            <form id="profile-form">
+                <p><label>Имя <input name="name" maxlength="100" required></label></p>
+                <button>Сохранить имя</button>
+            </form>
+            <p><button type="button" id="deactivate-button">Деактивировать аккаунт</button></p>
+        </section>
+
+        <section id="admin" hidden>
+            <h2>Пользователи</h2>
+            <button type="button" id="refresh-users">Обновить</button>
+            <ul id="users-list"></ul>
+            <button type="button" id="previous-users" disabled>Назад</button>
+            <span id="users-page-number"></span>
+            <button type="button" id="next-users" disabled>Далее</button>
+        </section>
+    </main>
+</body>
+</html>
